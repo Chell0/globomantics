@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import FeaturedHouse from "./featured-house";
 import Header from "./header";
 import "./main-page.css";
 
@@ -26,8 +27,11 @@ function App() {
 		<Router>
 			<div className="container">
 				<Header subtitle="Providing houses all over the world" />
+
 				<Routes>
-					<Route path="/"></Route>
+					<Route path="/">
+						<FeaturedHouse house={featuredHouse} />
+					</Route>
 				</Routes>
 			</div>
 		</Router>
