@@ -1,40 +1,38 @@
-import { useEffect, useMemo, useState } from "react";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import FeaturedHouse from "./featured-house";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import HousesContext from "../context/housesContex";
+import useFeaturedHouse from "../hooks/useFeaturedHouse";
+import useHouses from "../hooks/useHouses";
 import Header from "./header";
+import HouseFilter from "./house-filter";
 import "./main-page.css";
 
 function App() {
-	const [allHouses, setAllHouses] = useState([]);
-
-	useEffect(() => {
-		const fetchHouses = async () => {
-			const rsp = await fetch("/houses.json");
-			const houses = await rsp.json();
-			setAllHouses(houses);
-		};
-		fetchHouses();
-	}, []);
-
-	const featuredHouse = useMemo(() => {
-		if (allHouses.length) {
-			const randomIndex = Math.floor(Math.random() * allHouses.length);
-			return allHouses[randomIndex];
-		}
-	}, [allHouses]);
+	const allHouses = useHouses();
+	const featuredHouse = useFeaturedHouse(allHouses);
 
 	return (
-		<Router>
-			<div className="container">
-				<Header subtitle="Providing houses all over the world" />
+		<BrowserRouter>
+			<HousesContext.Provider value={allHouses}>
+				<div className="container">
+					<Header subtitle="Providing houses all over the world" />
+					<HouseFilter allHouses={allHouses} />
 
-				<Routes>
-					<Route path="/">
-						<FeaturedHouse house={featuredHouse} />
-					</Route>
-				</Routes>
-			</div>
-		</Router>
+					<Routes>
+						<Route
+							path="/searchresults/:country"
+							SearchResults
+							allHouses={allHouses}
+						/>
+						<Route
+							path="/house/:id"
+							HouseFromQuery
+							allHouses={allHouses}
+						/>
+						<Route path="/" FeaturedHouse house={featuredHouse} />
+					</Routes>
+				</div>
+			</HousesContext.Provider>
+		</BrowserRouter>
 	);
 }
 
